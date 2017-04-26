@@ -1,31 +1,62 @@
 require('sinatra')
 require('sinatra/reloader')
 also_reload('lib/**/*.rb')
+also_reload('views/**/*.erb')
 require('./lib/vehicle')
+require('./lib/dealership')
 
 get('/') do
   erb(:index)
 end
 
-get('/vehicles') do
-  @vehicles = Vehicle.all()
-  erb(:vehicles)
+get('/dealerships/new') do
+   erb(:dealerships_form)
 end
 
-get('/vehicles/new') do
-  erb(:vehicles_form)
+get('/dealerships') do
+  @dealerships = Dealership.all()
+  erb(:dealerships)
+end
+
+post('/dealerships') do
+  name = params.fetch('name')
+  Dealership.new(name).save()
+  @dealerships = Dealership.all()
+  erb(:success)
+end
+
+get('/vehicles/:id') do
+  @vehicle = Vehicle.find(params.fetch('id').to_i())
+  erb(:vehicle)
+end
+
+get('/dealerships/:id') do
+  @dealership = Dealership.find(params.fetch('id').to_i())
+  erb(:dealership)
+end
+
+get('/dealerships/:id/vehicles/new') do
+    @dealership = Dealership.find(params.fetch('id').to_i())
+    erb(:dealership_vehicles_form)
 end
 
 post('/vehicles') do
   make = params.fetch('make')
   model = params.fetch('model')
-  years = params.fetch('year')
-  vehicle = Vehicle.new(make, model, year)
-  vehicle.save()
+  year = params.fetch('year')
+  color = params.fetch('color')
+  @vehicle = Vehicle.new(make, model, year, color)
+  @vehicle.save()
+  @dealership = Dealership.find(params.fetch('dealership_id').to_i())
+  @dealership.add_vehicle(@vehicle)
   erb(:success)
 end
 
-get('/vehicles/:id') do
-  @vehicle = Vehicle.find(params.fetch("id"))
-  erb(:vehicle)
-end
+# get('/vehicles') do
+#   @vehicles = Vehicle.all()
+#   erb(:vehicles)
+# end
+
+# get('/vehicles/new') do
+#   erb(:vehicles_form)
+# end

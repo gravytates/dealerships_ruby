@@ -1,10 +1,11 @@
 class Vehicle
   @@vehicles = []
 
-  define_method(:initialize) do |make, model, year|
+  define_method(:initialize) do |make, model, year, color|
     @make = make
     @model = model
     @year = year
+    @color = color
     @id = @@vehicles.length().+(1)
   end
 
@@ -18,6 +19,10 @@ class Vehicle
 
   define_method(:year) do
     @year
+  end
+
+  define_method(:color) do
+    @color
   end
 
   define_method(:id) do
@@ -43,7 +48,7 @@ class Vehicle
         found_vehicle = vehicle
       end
     end
-    found_vehicle    
+    found_vehicle
   end
 
   define_method(:age) do
